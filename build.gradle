@@ -1,0 +1,156 @@
+buildscript {
+    ext {
+        versions = [
+                gradle           : '3.2.1',
+                springBoot       : '1.4.3.RELEASE',
+                springfox        : '2.6.1',
+                lombok           : '1.16.10',
+                lombok_plugin    : '1.6',
+				commons_io       : '2.5',
+				commons_lang     : '3.4',
+				javax_inject     : '1',
+				mapstruct        : '1.0.0.Final',
+                mapstruct_plugin : '0.9',
+				jackson          : '2.8.4',
+				jackson_jsog     : '1.1'
+				
+        ]
+        buildNumber = 'SNAPSHOT'
+        generatedMapperSourcesDir = "${buildDir}/generated-src/mapstruct/main"
+        delombokOutputDir = "$buildDir/delombok"
+    }
+
+    repositories {
+        maven { url 'https://plugins.gradle.org/m2/' }
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${versions.springBoot}"
+        classpath "io.franzbecker:gradle-lombok:${versions.lombok_plugin}"
+        classpath "net.ltgt.gradle:gradle-apt-plugin:${versions.mapstruct_plugin}"
+    }
+}
+
+configurations {
+    mapstruct
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+group = 'com.admin'
+version = '0.1.0'
+description = 'admin-dashboard'
+
+apply plugin: 'application'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.franzbecker.gradle-lombok'
+apply plugin: 'net.ltgt.apt'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+lombok {
+    version = versions.lombok
+    sha256 = null
+}
+
+jar {
+    manifest {
+        attributes 'Specification-Title': project.name,
+                   'Specification-Version': version,
+                   'Implementation-Version': buildNumber
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "${versions.gradle}"
+    distributionType = Wrapper.DistributionType.ALL
+}
+
+dependencies {
+    compile files('E:/GIT_PROJECT/COMMON_JARS/libs/ojdbc7-12.1.0.2.jar')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile "org.springframework.boot:spring-boot-starter-web",
+            "org.springframework.boot:spring-boot-starter-actuator",
+            "org.springframework:spring-context-support",
+            "org.springframework.boot:spring-boot-autoconfigure",
+            "org.springframework.boot:spring-boot-configuration-processor",
+            "org.springframework.boot:spring-boot-loader-tools",
+            "org.springframework.boot:spring-boot-starter-aop",
+            "org.springframework.boot:spring-boot-starter-logging",
+			"org.springframework.boot:spring-boot-starter-tomcat",
+			"javax.inject:javax.inject:${versions.javax_inject}",
+			"commons-io:commons-io:${versions.commons_io}",
+			"org.apache.commons:commons-lang3:${versions.commons_lang}",
+			"org.mapstruct:mapstruct-jdk8:${versions.mapstruct}",
+ 			"com.fasterxml.jackson.datatype:jackson-datatype-hppc:${versions.jackson}",
+	 		"com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${versions.jackson}",
+	 		"com.fasterxml.jackson.datatype:jackson-datatype-json-org:${versions.jackson}",
+	 		"com.fasterxml.jackson.core:jackson-databind:${versions.jackson}",
+	 		"com.voodoodyne.jackson.jsog:jackson-jsog:${versions.jackson_jsog}",
+	 		//"com.amazonaws:aws-java-sdk:${versions.aws_sdk}"
+    
+    mapstruct("org.mapstruct:mapstruct-processor:${versions.mapstruct}")
+    
+    compile ("io.springfox:springfox-swagger2:${versions.springfox}") {
+        exclude module: 'mapstruct'
+    }
+    
+    compile "io.springfox:springfox-swagger-ui:${versions.springfox}"
+    
+    testCompile 'junit:junit:4.12',
+                'org.springframework.boot:spring-boot-starter-test'
+                
+}
+
+sourceSets.main {
+     java.srcDir "${generatedMapperSourcesDir}"
+}
+
+import io.franzbecker.gradle.lombok.task.DelombokTask
+
+task delombok(type: DelombokTask) {
+    ext.outputDir = file("$delombokOutputDir")
+    outputs.dir(outputDir)
+    sourceSets.main.java.srcDirs.each { 
+        inputs.dir(it)
+        args(it, "-d", outputDir)
+    }
+}
+
+task generateMainMapperClasses(type: JavaCompile, dependsOn: delombok) {
+    ext.aptDumpDir = file("${buildDir}/tmp/apt/mapstruct")
+    destinationDir = aptDumpDir
+ 
+    classpath = compileJava.classpath + configurations.mapstruct
+    source = delombok.outputDir
+    ext.sourceDestDir = file ("$generatedMapperSourcesDir")
+ 
+    options.define(
+        compilerArgs: [
+            "-nowarn",
+            "-proc:only",
+            "-encoding", "UTF-8",
+            "-processor", "org.mapstruct.ap.MappingProcessor",
+            "-s", sourceDestDir.absolutePath,
+            "-source", rootProject.sourceCompatibility,
+            "-target", rootProject.targetCompatibility,
+        ]
+    );
+ 
+    inputs.dir source
+    outputs.dir generatedMapperSourcesDir;
+    doFirst {
+         sourceDestDir.mkdirs()
+    }
+    doLast {
+        aptDumpDir.delete()
+    }
+}
+
+compileJava.dependsOn generateMainMapperClasses
