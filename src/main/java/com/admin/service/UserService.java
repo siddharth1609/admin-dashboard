@@ -7,4 +7,7 @@ import com.admin.datamodel.User;
 public interface UserService {
 
 	List<User> getAllUser();
+
+	User SaveUser(User user);
+
 }

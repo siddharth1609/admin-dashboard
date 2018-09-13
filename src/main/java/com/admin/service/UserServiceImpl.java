@@ -28,6 +28,14 @@ public class UserServiceImpl implements UserService {
 		return UserMapper.INSTANE.listUserToUserDTO(userRepository.findAll());
 	}
 
+	@Override
+	public User SaveUser(User user) {
+
+		UserDTO userDTO = UserMapper.INSTANE.userToUserDT(user);
+
+		return UserMapper.INSTANE.userToUserDT(userRepository.save(userDTO));// UserMapper.INSTANE.userToUserDT(userDTO);
+	}
+
 }
 // given
 // Car car = new Car( "Morris", 5, CarType.SEDAN );

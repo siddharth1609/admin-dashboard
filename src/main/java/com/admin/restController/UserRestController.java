@@ -2,9 +2,12 @@ package com.admin.restController;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +32,18 @@ public class UserRestController {
 			// You many decide to return HttpStatus.NOT_FOUND
 		}
 		return new ResponseEntity<List<User>>(users, HttpStatus.OK);
+	}
+
+	// ------------------Save User Details
+
+	@RequestMapping(value = "/save-user/", method = RequestMethod.POST)
+	public String SaveUser(@Valid @RequestBody User user) {
+		User usersave = userService.SaveUser(user);
+
+		String getid = usersave.getId();
+
+		return usersave.getId();
+
 	}
 
 }

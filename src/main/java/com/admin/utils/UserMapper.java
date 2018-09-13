@@ -15,8 +15,11 @@ public interface UserMapper {
 
 	User userToUserDT(UserDTO userDTO);
 
+	UserDTO userToUserDT(User user);
+
 	// @Mapping(source = "numberOfSeats", target = "seatCount")
 	// CarDto carToCarDto(Car car); 2
 
 	List<User> listUserToUserDTO(List<UserDTO> dtolist);
+
 }
