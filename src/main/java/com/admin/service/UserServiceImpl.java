@@ -36,9 +36,28 @@ public class UserServiceImpl implements UserService {
 		return UserMapper.INSTANE.userToUserDT(userRepository.save(userDTO));// UserMapper.INSTANE.userToUserDT(userDTO);
 	}
 
-}
-// given
-// Car car = new Car( "Morris", 5, CarType.SEDAN );
+	@Override
+	public User getUserByid(Long id) {
 
-// when
-// CarDto carDto = CarMapper.INSTANCE.carToCarDto( car );
+		return UserMapper.INSTANE.userToUserDT(userRepository.findOne(id));
+	}
+
+	@Override
+	public User updateUserById(Long id, User user) {
+
+		UserDTO finduser = userRepository.findOne(id);
+
+		finduser = UserMapper.INSTANE.userToUserDT(user);
+
+		return UserMapper.INSTANE.userToUserDT(userRepository.save(finduser));
+	}
+
+	@Override
+	public User deleteUserByid(Long id) {
+		UserDTO finduser = userRepository.findOne(id);
+		userRepository.delete(finduser);
+		return UserMapper.INSTANE.userToUserDT(finduser);
+
+	}
+
+}
