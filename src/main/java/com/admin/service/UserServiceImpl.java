@@ -60,4 +60,15 @@ public class UserServiceImpl implements UserService {
 
 	}
 
+	/*
+	 * @Override public String getPincode(Long id, User user) { UserDTO finduser
+	 * = userRepository.findOne(id);
+	 * 
+	 * finduser = UserMapper.INSTANE.userToUserDT(user);
+	 * 
+	 * UserDomain userDomain = UserMapper.INSTANE.
+	 * 
+	 * return UserMapper.INSTANE.usertoDomainUser(userDomain) }
+	 */
+
 }

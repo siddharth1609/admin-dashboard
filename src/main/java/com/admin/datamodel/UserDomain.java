@@ -6,6 +6,6 @@ import lombok.Data;
 public class UserDomain {
 	private String firstName;
 	private String lastName;
-	Addres address;
+	Addres addres;
 
 }

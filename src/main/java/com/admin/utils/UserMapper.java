@@ -47,7 +47,13 @@ public interface UserMapper {
 	/*
 	 * @Mapping(source="name", target="title") SongDTO songToDto(Song song);
 	 */
-	@Mapping(target = "address", source = "userDomain.address.localAddress")
+	// @Mapping(target = "address", source = "userDomain.addres.localAddress")
+	// @Mapping(target = "zipcode", source = "userDomain.address.pincode")
+	// @Mapping(target = "zipcode", source =
+	// "userDomain.address.pincode.pincodeValue")
+	// @Mapping(target = "zipcode", source =
+	// "userDomain.addres.pincode.pincodeValue")
+	@Mapping(target = "zipcode", source = "userDomain.addres.pincode.pincodeValue")
 	com.admin.datamodel.User usertoDomainUser(com.admin.datamodel.UserDomain userDomain);
 
 	// @Mapping(source = "userDomain.addres.localAddress", target = "address")

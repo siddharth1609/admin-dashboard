@@ -16,4 +16,6 @@ public interface UserService {
 
 	User deleteUserByid(Long id);
 
+	String getPincode(Long id, User user);
+
 }
