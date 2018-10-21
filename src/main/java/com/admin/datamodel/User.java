@@ -14,4 +14,5 @@ public class User {
 	private String zipcode;
 	private String contry;
 	private String emil;
+	private String address;
 }
